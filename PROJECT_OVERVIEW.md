@@ -1,6 +1,6 @@
-# CloudSketch Project Overview
+# InfraFlow Project Overview
 
-**CloudSketch** is an interactive, visual cloud infrastructure design tool that allows developers to design and sketch AWS cloud architectures on a web-based canvas, validating connections dynamically and compiling the visual diagrams directly into **Terraform configuration blocks** in real-time.
+**InfraFlow** is an interactive, visual cloud infrastructure design tool that allows developers to design and sketch AWS cloud architectures on a web-based canvas, validating connections dynamically and compiling the visual diagrams directly into **Terraform configuration blocks** in real-time.
 
 ---
 
@@ -30,7 +30,7 @@
 ## 📁 Repository Directory Structure
 
 ```text
-cloudsketch/
+infraflow/
 ├── public/                 # Next.js static public assets
 ├── src/                    # Next.js Application Source
 │   ├── app/                # App router routes & APIs (globals.css, layout, page, api/generate)

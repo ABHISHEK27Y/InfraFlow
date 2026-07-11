@@ -73,7 +73,7 @@ export default function Header({
       {/* Brand & Project Selector */}
       <div className="flex items-center gap-4">
         <Link href="/" className="text-xl font-bold tracking-tight hover:text-blue-400 transition">
-          CloudSketch
+          InfraFlow
         </Link>
         
         <div className="h-6 w-[1px] bg-neutral-700" />

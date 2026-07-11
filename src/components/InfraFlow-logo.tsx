@@ -6,16 +6,16 @@ type Props = {
 }
 
 /**
- * CloudSketchLogo
+ * InfraFlowLogo
  * Minimal logo: cloud outline with small connected nodes (IAC sketch).
  * Colors:
  * - Outline/edges: black
  * - Nodes: dark blue (#0B3B8C)
  */
-export function CloudSketchLogo({ className, size = 32 }: Props) {
+export function InfraFlowLogo({ className, size = 32 }: Props) {
   const s = size
   return (
-    <svg width={s} height={s} viewBox="0 0 64 64" role="img" aria-label="CloudSketch logo" className={className}>
+    <svg width={s} height={s} viewBox="0 0 64 64" role="img" aria-label="InfraFlow logo" className={className}>
       {/* cloud outline */}
       <path
         d="M22 42H48a8 8 0 0 0 0-16 11 11 0 0 0-21.3-3.7A10 10 0 0 0 22 42Z"
@@ -38,4 +38,4 @@ export function CloudSketchLogo({ className, size = 32 }: Props) {
   )
 }
 
-export default CloudSketchLogo
+export default InfraFlowLogo

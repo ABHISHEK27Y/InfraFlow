@@ -1,10 +1,10 @@
-# CloudSketch Current System
+# InfraFlow Current System
 
 This folder documents how the app works today. It intentionally ignores the long-term vision, roadmap, business plan, and market reports.
 
 ## What This App Does
 
-CloudSketch is a Next.js app where users place AWS resources on a React Flow canvas, connect them, configure them, and see Terraform generated from the current canvas state.
+InfraFlow is a Next.js app where users place AWS resources on a React Flow canvas, connect them, configure them, and see Terraform generated from the current canvas state.
 
 ```mermaid
 flowchart LR

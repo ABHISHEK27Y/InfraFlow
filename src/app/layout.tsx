@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CloudSketch",
+  title: "InfraFlow",
   description: "Design AWS architectures visually and compile to Terraform",
 };
 

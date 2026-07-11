@@ -122,7 +122,7 @@ resource "aws_iam_role" "{{.NodeID}}" {
   })
 
   tags = {
-    CreatedBy = "CloudSketch"
+    CreatedBy = "InfraFlow"
     NodeID    = "{{.NodeID}}"
   }
 }

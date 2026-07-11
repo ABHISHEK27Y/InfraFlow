@@ -27,7 +27,7 @@ function Login() {
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white text-black">
-        <p>Loading Cloudsketch...</p>
+        <p>Loading Infraflow...</p>
       </div>
     );
   }
@@ -107,7 +107,7 @@ function Login() {
       {/* Content */}
       <section className="relative z-10 flex min-h-screen items-center justify-end p-16">
         <div className="w-full max-w-md">
-          <h1 className="sr-only">CloudSketch Login</h1>
+          <h1 className="sr-only">InfraFlow Login</h1>
 
           {/* Login Form */}
           <LoginForm

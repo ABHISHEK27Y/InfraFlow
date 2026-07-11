@@ -42,7 +42,7 @@ interface ProjectStore {
   deleteProject: (id: string) => void;
 }
 
-const METADATA_KEY = "cloudsketch_projects";
+const METADATA_KEY = "infraflow_projects";
 let saveTimeout: NodeJS.Timeout | null = null;
 
 export const useProjectStore = create<ProjectStore>((set, get) => {
@@ -116,7 +116,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       };
 
       try {
-        localStorage.setItem(`cloudsketch_project_${id}`, JSON.stringify(newProjectPayload));
+        localStorage.setItem(`infraflow_project_${id}`, JSON.stringify(newProjectPayload));
 
         const updatedList = [
           ...get().projectsList,
@@ -140,7 +140,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       if (typeof window === "undefined") return;
 
       try {
-        const storedPayload = localStorage.getItem(`cloudsketch_project_${id}`);
+        const storedPayload = localStorage.getItem(`infraflow_project_${id}`);
         if (!storedPayload) {
           console.warn(`Project payload not found for ID: ${id}`);
           return;
@@ -186,7 +186,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       };
 
       try {
-        localStorage.setItem(`cloudsketch_project_${currentProjectId}`, JSON.stringify(payload));
+        localStorage.setItem(`infraflow_project_${currentProjectId}`, JSON.stringify(payload));
 
         const updatedList = projectsList.map((p) =>
           p.id === currentProjectId
@@ -215,7 +215,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       const { currentProjectId, projectsList } = get();
 
       try {
-        localStorage.removeItem(`cloudsketch_project_${id}`);
+        localStorage.removeItem(`infraflow_project_${id}`);
         const updatedList = projectsList.filter((p) => p.id !== id);
         localStorage.setItem(METADATA_KEY, JSON.stringify(updatedList));
 

@@ -1,4 +1,4 @@
-# CloudSketch
+# InfraFlow
 
 An interactive web application for designing and sketching AWS cloud architectures visually, which compiles directly to Terraform.
 

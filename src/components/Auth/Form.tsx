@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Github } from "lucide-react";
-import CloudSketchLogo from "../CloudSketch-logo";
+import InfraFlowLogo from "../InfraFlow-logo";
 import type { OAuthStrategy } from "@clerk/types";
 
 type Props = {
@@ -60,9 +60,9 @@ export function LoginForm({
   return (
     <Card className="w-full max-w-sm bg-white border">
       <CardHeader className="flex items-center text-center">
-        <CloudSketchLogo className="mb-2" size={36} />
+        <InfraFlowLogo className="mb-2" size={36} />
         <CardTitle className="text-balance text-2xl">
-          Sign in to CloudSketch
+          Sign in to InfraFlow
         </CardTitle>
         <CardDescription className="text-pretty">
           Visual Infrastructure-as-Code editor.

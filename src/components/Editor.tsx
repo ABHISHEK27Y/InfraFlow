@@ -43,7 +43,7 @@ export default function TerraformEditor({
   }, [isDragging, setEditorWidth]);
 
   const handleEditorMount: OnMount = (editor, monaco) => {
-    monaco.editor.defineTheme("cloudsketch-dark", {
+    monaco.editor.defineTheme("infraflow-dark", {
       base: "vs-dark",
       inherit: true,
       rules: [],
@@ -57,7 +57,7 @@ export default function TerraformEditor({
         "editorGutter.background": "#1e1f22",
       },
     });
-    monaco.editor.setTheme("cloudsketch-dark");
+    monaco.editor.setTheme("infraflow-dark");
   };
 
   return (

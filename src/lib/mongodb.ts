@@ -32,7 +32,7 @@ export async function connectDB() {
   if (!cached.promise) {
     cached.promise = mongoose
       .connect(MONGODB_URI, {
-        dbName: "cloudsketch",
+        dbName: "infraflow",
         // Optional settings for production
         // useNewUrlParser: true,
         // useUnifiedTopology: true,
