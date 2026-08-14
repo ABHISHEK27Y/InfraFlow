@@ -42,7 +42,8 @@ export function useCanvasDragAndDrop(
   }, []);
 
   const onNodeDragStop = useCallback(
-    async (event: React.MouseEvent, node: Node) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (event: any, node: Node) => {
       if (
         node.type === "subnet" ||
         node.type === "ec2" ||
