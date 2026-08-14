@@ -49,6 +49,11 @@ export default function Sidebar() {
     toggleAwsSection,
   } = useUIPanelStore();
 
+  const onDragStart = (event: React.DragEvent, nodeType: string) => {
+    event.dataTransfer.setData("application/reactflow", nodeType);
+    event.dataTransfer.effectAllowed = "move";
+  };
+
   return (
     <>
       <Card className="fixed left-4 top-1/2 -translate-y-1/2 z-50 p-2 shadow-lg border-none rounded-xl bg-[#232329] border border-white border-2xl">
@@ -158,6 +163,8 @@ export default function Sidebar() {
                       .map((item) => (
                       <div
                         key={item.name}
+                        draggable
+                        onDragStart={(event) => onDragStart(event, item.id)}
                         className={`rounded-md px-3 py-2 text-sm flex items-start gap-2 cursor-pointer ${
                           selectedTool === item.id
                             ? "bg-[#3B82F6] hover:bg-[#3B82F6]"

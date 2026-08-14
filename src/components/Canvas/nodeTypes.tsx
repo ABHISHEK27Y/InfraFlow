@@ -12,6 +12,8 @@ import VPCNode from "../nodes/awsNodes/VPCNode";
 import SubnetNode from "../nodes/awsNodes/SubnetNode";
 import CircleNode from "../nodes/tools/CircleNode";
 import ELBNode from "../nodes/awsNodes/ELBNode";
+import SGNode from "../nodes/awsNodes/SGNode";
+import IAMNode from "../nodes/awsNodes/IAMNode";
 import { ResourceBlock } from "@/utils/types/resource";
 
 export const nodeTypes = {
@@ -27,6 +29,8 @@ export const nodeTypes = {
   subnet: SubnetNode,
   circle: CircleNode,
   elb: ELBNode,
+  sg: SGNode,
+  iam: IAMNode,
 };
 
 export function getDefaultDataForNode(
@@ -90,6 +94,9 @@ export function getDefaultDataForNode(
     case "text":
     case "circle":
       return { id };
+    case "sg":
+    case "iam":
+      return { id, Name: "" };
     default:
       throw new Error(`Unknown node type: ${type}`);
   }

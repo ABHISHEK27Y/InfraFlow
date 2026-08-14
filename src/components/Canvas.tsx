@@ -197,6 +197,57 @@ function FlowContent() {
     [selectedTool, screenToFlowPosition, addNode, selectedNode, setSelectedTool, clearSelection]
   );
 
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  const onDrop = useCallback(
+    async (event: React.DragEvent) => {
+      event.preventDefault();
+
+      const type = event.dataTransfer.getData("application/reactflow");
+
+      if (!type) {
+        return;
+      }
+
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      const newNodeId = crypto.randomUUID();
+
+      const newNode: Node<ResourceBlock["data"]> = {
+        id: newNodeId,
+        type,
+        position,
+        draggable: false,
+        data: getDefaultDataForNode(type, newNodeId),
+      };
+
+      if (type === "vpc") {
+        newNode.width = MIN_VPC_WIDTH;
+        newNode.height = MIN_VPC_HEIGHT;
+      }
+
+      try {
+        await syncNodeWithBackend({
+          id: newNode.id,
+          type: newNode.type!,
+          data: newNode.data,
+        });
+        addNode(newNode);
+        selectedNode(newNode.id);
+        setSelectedTool("hand");
+      } catch (err) {
+        console.error("Failed to sync with backend:", err);
+      }
+    },
+    [screenToFlowPosition, addNode, selectedNode, setSelectedTool]
+  );
+
   const memoizedEdges = useMemo(() => {
     const isSelectTool = selectedTool === "select";
 
@@ -305,6 +356,8 @@ function FlowContent() {
         onSelectionStart={onSelectionStart}
         onNodeDragStop={onNodeDragStop}
         onPaneClick={handlePaneClick}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
         onNodeClick={onNodeClick}
         onEdgeClick={onEdgeClick}
         onSelectionChange={onSelectionChange}
