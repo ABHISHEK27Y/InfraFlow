@@ -179,15 +179,9 @@ export default function Header({
       {/* Nav Links & Action Buttons */}
       <div className="flex items-center gap-4">
         <nav className="hidden lg:flex gap-6 text-sm text-neutral-300 font-medium">
-          <Link href="/canvas" className="hover:text-white transition">
-            Canvas
-          </Link>
-          <Link href="/editor" className="hover:text-white transition">
-            Editor
-          </Link>
-          <Link href="/docs" className="hover:text-white transition">
-            Docs
-          </Link>
+          <a href="https://github.com/ABHISHEK27Y/InfraFlow" target="_blank" rel="noreferrer" className="hover:text-white transition flex items-center gap-1">
+            GitHub Repository
+          </a>
         </nav>
 
         <div className="h-5 w-[1px] bg-neutral-700 hidden lg:block" />
