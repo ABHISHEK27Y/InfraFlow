@@ -221,6 +221,7 @@ export default function Header({
               Resources
             </Button>
           )}
+
           <Button className="lg:hidden p-2" variant="ghost">
             <Menu className="h-5 w-5" />
           </Button>

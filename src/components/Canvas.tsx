@@ -119,6 +119,11 @@ function FlowContent() {
       const targetNode = nodes.find((node) => node.id === connection.target);
       if (!sourceNode?.type || !targetNode?.type) return false;
 
+      const genericShapes = ["rectangle", "rhombus", "circle", "text"];
+      if (genericShapes.includes(sourceNode.type) || genericShapes.includes(targetNode.type)) {
+        return true;
+      }
+
       return canConnect(sourceNode.type, targetNode.type);
     },
     [edges, nodes]

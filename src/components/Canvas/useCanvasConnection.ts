@@ -25,7 +25,10 @@ export function useCanvasConnection(
         return;
       }
 
-      if (!canConnect(sourceNode.type, targetNode.type)) {
+      const genericShapes = ["rectangle", "rhombus", "circle", "text"];
+      const isGenericConnection = genericShapes.includes(sourceNode.type) || genericShapes.includes(targetNode.type);
+
+      if (!isGenericConnection && !canConnect(sourceNode.type, targetNode.type)) {
         alert(`❌ Cannot connect ${sourceNode.type} to ${targetNode.type}`);
         return;
       }
@@ -39,10 +42,12 @@ export function useCanvasConnection(
       };
 
       try {
-        const ugcpRes = await handleConnection(edgeObj, sourceNode, targetNode);
-        if (!ugcpRes.success) {
-          alert(`❌ Connection failed: ${ugcpRes.error}`);
-          return;
+        if (!isGenericConnection) {
+          const ugcpRes = await handleConnection(edgeObj, sourceNode, targetNode);
+          if (!ugcpRes.success) {
+            alert(`❌ Connection failed: ${ugcpRes.error}`);
+            return;
+          }
         }
 
         addEdge(edgeObj); // only add edge if no error

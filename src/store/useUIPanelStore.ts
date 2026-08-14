@@ -6,6 +6,7 @@ type ConfigPanelStore = {
   isEditorOpen: boolean;
   isAwsComponentsOpen: boolean;
   isAiConsoleOpen: boolean;
+  isWhiteboardOpen: boolean;
   awsOpenSections: Record<string, boolean>;
 
   settingsVersion: "resource" | "node";
@@ -17,6 +18,7 @@ type ConfigPanelStore = {
   closePanels: () => void;
   toggleAwsComponents: () => void;
   toggleAiConsole: () => void;
+  toggleWhiteboard: () => void;
   toggleAwsSection: (title: string) => void;
   collapseAllSideMenus: () => void;
 };
@@ -27,6 +29,7 @@ export const useUIPanelStore = create<ConfigPanelStore>((set) => ({
   isSettingsOpen: false,
   isAwsComponentsOpen: false,
   isAiConsoleOpen: false,
+  isWhiteboardOpen: false,
   awsOpenSections: {},
 
   settingsVersion: "node",
@@ -65,6 +68,11 @@ export const useUIPanelStore = create<ConfigPanelStore>((set) => ({
       isAiConsoleOpen: !state.isAiConsoleOpen,
     })),
 
+  toggleWhiteboard: () =>
+    set((state) => ({
+      isWhiteboardOpen: !state.isWhiteboardOpen,
+    })),
+
   toggleAwsSection: (title) =>
     set((state) => ({
       awsOpenSections: {
@@ -80,6 +88,7 @@ export const useUIPanelStore = create<ConfigPanelStore>((set) => ({
       isEditorOpen: false,
       isAwsComponentsOpen: false,
       isAiConsoleOpen: false,
+      isWhiteboardOpen: false,
       awsOpenSections: {},
     })),
 }));

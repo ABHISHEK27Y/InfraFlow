@@ -49,19 +49,19 @@ export default function TerraformSideMenu({ editorWidth }: TerraformSideMenuProp
   return (
     <SettingsPanelShell
       editorWidth={editorWidth}
-      title="Terraform resources"
-      subtitle="Manage shared infrastructure config"
+      title="Global Configuration"
+      subtitle="Manage global AWS resources"
       onClose={closeSettingsorConfig}
     >
-      <div className="space-y-3">
+      <div className="space-y-4">
         <ResourceFolder
           title="Security Groups"
-          icon={<Shield className="h-3.5 w-3.5 text-sky-400" />}
+          icon={<Shield className="h-4 w-4 text-sky-400" />}
           count={securityGroups.length}
           onAdd={() => handleNewResource("securitygroup")}
         >
           {securityGroups.length === 0 ? (
-            <p className="px-3 py-2 text-xs text-slate-600">No security groups yet</p>
+            <p className="text-xs text-neutral-500 py-1">No security groups defined.</p>
           ) : (
             renderResourceList(securityGroups)
           )}
@@ -69,12 +69,12 @@ export default function TerraformSideMenu({ editorWidth }: TerraformSideMenuProp
 
         <ResourceFolder
           title="Key Pairs"
-          icon={<KeyRound className="h-3.5 w-3.5 text-amber-400" />}
+          icon={<KeyRound className="h-4 w-4 text-amber-400" />}
           count={keyPairs.length}
           onAdd={() => handleNewResource("keypair")}
         >
           {keyPairs.length === 0 ? (
-            <p className="px-3 py-2 text-xs text-slate-600">No key pairs yet</p>
+            <p className="text-xs text-neutral-500 py-1">No key pairs defined.</p>
           ) : (
             renderResourceList(keyPairs)
           )}
@@ -82,12 +82,12 @@ export default function TerraformSideMenu({ editorWidth }: TerraformSideMenuProp
 
         <ResourceFolder
           title="IAM"
-          icon={<Fingerprint className="h-3.5 w-3.5 text-violet-400" />}
+          icon={<Fingerprint className="h-4 w-4 text-violet-400" />}
           count={IAM.length}
           onAdd={() => handleNewResource("iam")}
         >
           {IAM.length === 0 ? (
-            <p className="px-3 py-2 text-xs text-slate-600">No IAM resources yet</p>
+            <p className="text-xs text-neutral-500 py-1">No IAM roles defined.</p>
           ) : (
             renderResourceList(IAM)
           )}

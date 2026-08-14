@@ -91,9 +91,10 @@ export function getDefaultDataForNode(
       };
     case "rectangle":
     case "rhombus":
-    case "text":
     case "circle":
-      return { id };
+      return { id, label: "", colorIndex: 0 };
+    case "text":
+      return { id, label: "" };
     case "sg":
     case "iam":
       return { id, Name: "" };
