@@ -43,6 +43,7 @@ export default function EdgeDeleteToolbar() {
       left: screenPos.x,
       top: screenPos.y - 36,
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEdgeIds, edges, nodes, flowToScreenPosition, transform]);
 
   if (!position) return null;

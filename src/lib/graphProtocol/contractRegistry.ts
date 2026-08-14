@@ -298,7 +298,7 @@ export const contractRegistry: Record<string, NodeCommunicationContract> = {
       }
       return { success: false };
     },
-    onConnectionRequest: (currentNode, otherNode, role, edge): SignalResponse => {
+    onConnectionRequest: (currentNode, otherNode, _role, _edge): SignalResponse => {
       if (otherNode.type === "ec2") {
         const currentSGs = (otherNode.data.SecurityGroups as string[]) || [];
         if (!currentSGs.includes(currentNode.id)) {
@@ -313,7 +313,7 @@ export const contractRegistry: Record<string, NodeCommunicationContract> = {
       }
       return { success: true };
     },
-    onConnectionDelete: (currentNode, otherNode, role, edge): SignalResponse => {
+    onConnectionDelete: (currentNode, otherNode, _role, _edge): SignalResponse => {
       if (otherNode.type === "ec2") {
         const currentSGs = (otherNode.data.SecurityGroups as string[]) || [];
         return {
@@ -328,7 +328,7 @@ export const contractRegistry: Record<string, NodeCommunicationContract> = {
     }
   },
   iam: {
-    onConnectionRequest: (currentNode, otherNode, role, edge): SignalResponse => {
+    onConnectionRequest: (currentNode, otherNode, _role, _edge): SignalResponse => {
       if (otherNode.type === "ec2") {
         return {
           success: true,
@@ -340,7 +340,7 @@ export const contractRegistry: Record<string, NodeCommunicationContract> = {
       }
       return { success: true };
     },
-    onConnectionDelete: (currentNode, otherNode, role, edge): SignalResponse => {
+    onConnectionDelete: (currentNode, otherNode, _role, _edge): SignalResponse => {
       if (otherNode.type === "ec2") {
         return {
           success: true,

@@ -1,4 +1,3 @@
-import { connectionKeys } from "@/lib/nodeConnections/connectionLogicRegistry";
 
 // Allowed connections map
 const connectionRules: Record<string, string[]> = {

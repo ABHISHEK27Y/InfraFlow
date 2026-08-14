@@ -21,7 +21,7 @@ function RhombusNode({ id, selected, width, height, data }: NodeProps) {
     "bg-rose-900/50 border-rose-500",
     "bg-purple-900/50 border-purple-500",
   ];
-  const colorIndex = (data as any)?.colorIndex || 0;
+  const colorIndex = (data as { colorIndex?: number })?.colorIndex || 0;
   const currentColor = colors[colorIndex % colors.length];
 
   const handleShapeClick = (e: React.MouseEvent) => {
@@ -107,7 +107,7 @@ function RhombusNode({ id, selected, width, height, data }: NodeProps) {
             }}
           >
             <textarea
-              value={(data as any)?.label || ""}
+              value={(data as { label?: string })?.label || ""}
               onChange={handleTextChange}
               placeholder="Type..."
               className="w-full h-full bg-transparent border-none outline-none resize-none overflow-hidden text-center text-sm font-semibold text-white p-1"
