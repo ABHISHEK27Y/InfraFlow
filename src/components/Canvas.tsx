@@ -328,7 +328,9 @@ function FlowContent() {
             const sourceNode = nodes.find((n) => n.id === edge.source);
             const targetNode = nodes.find((n) => n.id === edge.target);
             if (sourceNode && targetNode) {
-              handleDisconnection(edge, sourceNode, targetNode);
+              handleDisconnection(edge, sourceNode, targetNode).catch((err) => {
+                console.error("Failed to handle disconnection properly:", err);
+              });
             }
           }
         }
@@ -342,7 +344,7 @@ function FlowContent() {
   );
 
   return (
-    <div className="w-full h-full overflow-hidden relative">
+    <div id="rf-canvas-container" className="w-full h-full overflow-hidden relative bg-[#070913]">
       <ReactFlow
         fitView={false}
         nodes={nodes}

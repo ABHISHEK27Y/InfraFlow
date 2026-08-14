@@ -39,7 +39,7 @@ export function useCanvasConnection(
       };
 
       try {
-        const ugcpRes = handleConnection(edgeObj, sourceNode, targetNode);
+        const ugcpRes = await handleConnection(edgeObj, sourceNode, targetNode);
         if (!ugcpRes.success) {
           alert(`❌ Connection failed: ${ugcpRes.error}`);
           return;

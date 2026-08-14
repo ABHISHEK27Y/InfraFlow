@@ -3,8 +3,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Menu, Plus, ChevronDown, Trash2, Folder, Check } from "lucide-react";
+import { Menu, Plus, ChevronDown, Trash2, Folder, Check, Download, Camera } from "lucide-react";
 import { useProjectStore } from "@/store/useProjectStore";
+import { useTerraformStore } from "@/store/useTerraformStore";
+import { downloadTerraformZip, exportDiagramToPNG } from "@/utils/exportUtils";
 
 export default function Header({
   onGenerateTerraform,
@@ -22,6 +24,8 @@ export default function Header({
     renameCurrentProject,
     deleteProject,
   } = useProjectStore();
+
+  const { getAllAsString } = useTerraformStore();
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(currentProjectName);
@@ -189,6 +193,22 @@ export default function Header({
         <div className="h-5 w-[1px] bg-neutral-700 hidden lg:block" />
 
         <div className="flex items-center gap-2">
+          <Button
+            onClick={() => exportDiagramToPNG("rf-canvas-container")}
+            variant="outline"
+            title="Snapshot Image"
+            className="text-sm px-3 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition"
+          >
+            <Camera className="h-4 w-4 text-blue-400" />
+          </Button>
+          <Button
+            onClick={() => downloadTerraformZip(getAllAsString())}
+            variant="outline"
+            title="Download Terraform Code (ZIP)"
+            className="text-sm px-3 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition"
+          >
+            <Download className="h-4 w-4 text-emerald-400" />
+          </Button>
           {onGenerateTerraform && (
             <Button
               onClick={onGenerateTerraform}
