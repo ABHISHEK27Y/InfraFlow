@@ -46,12 +46,12 @@ export default function CommandPalette() {
       {
         id: "save-project",
         label: "Save Project",
-        description: "Save current project to cloud and local",
+        description: "Save current project using the selected sync mode",
         keywords: ["save", "sync", "cloud", "local"],
         icon: <Save className="h-4 w-4" />,
         shortcut: "Ctrl+S",
         category: "File",
-        action: () => { saveCurrentProject("both"); setIsOpen(false); },
+        action: () => { saveCurrentProject(); setIsOpen(false); },
       },
       {
         id: "export-terraform",

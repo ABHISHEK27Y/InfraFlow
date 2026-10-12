@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -130,6 +130,7 @@ export default function ProjectManager() {
           useTerraformStore.getState().setBlocks(data.project.terraformBlocks || {});
           useTerraformResourceStore.getState().setResources(data.project.resources || []);
           setProjectMeta(newId, data.project.name + " (Imported)");
+          void saveCurrentProject("local");
         }
       } catch (err) {
         console.error("Failed to import project:", err);
@@ -213,19 +214,17 @@ export default function ProjectManager() {
                 </Button>
               </div>
 
-              <div className="relative">
+              <div>
                 <input
                   type="file"
                   accept=".json"
                   onChange={handleImportJSON}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  className="sr-only"
                   id="import-file"
                 />
-                <label htmlFor="import-file" className="w-full">
-  <Button variant="outline" className="w-full">
-    <CloudUpload className="w-4 h-4 mr-2" /> Import JSON
-  </Button>
-</label>
+                <label htmlFor="import-file" className={`${buttonVariants({ variant: "outline" })} w-full cursor-pointer`}>
+                  <CloudUpload className="w-4 h-4 mr-2" /> Import JSON
+                </label>
               </div>
 
               <Separator />
