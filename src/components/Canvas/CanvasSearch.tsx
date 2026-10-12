@@ -77,7 +77,7 @@ export default function CanvasSearch() {
   const totalCount = nodes.length;
 
   return (
-    <div className="absolute top-4 left-4 z-20">
+    <div className="absolute top-4 left-24 z-20 max-w-[calc(100vw-7rem)]">
       <div className="relative">
         {/* Search Input */}
         <div className="flex items-center gap-2 bg-[#0f1219] border border-slate-700 rounded-lg overflow-hidden shadow-lg">

@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Menu, Plus, ChevronDown, Trash2, Folder, Check, FileText, ShieldAlert, Map, GitBranch, Keyboard, Sparkles, Users, Download, Terminal, Wrench, Grid } from "lucide-react";
+import { Plus, ChevronDown, Trash2, Folder, Check, FileText, ShieldAlert, Map, GitBranch, Keyboard, Sparkles, Users, Download, Terminal, Wrench, Grid } from "lucide-react";
 import { useProjectStore } from "@/store/useProjectStore";
 import { useUIPanelStore } from "@/store/useUIPanelStore";
 
@@ -94,9 +94,9 @@ export default function Header({
   };
 
   return (
-    <header className="relative w-full px-6 py-3 border-b border-[#222228] bg-[#232329] text-white flex items-center justify-between shadow-md z-[1100]">
+    <header className="relative w-full px-4 py-3 border-b border-[#222228] bg-[#232329] text-white flex flex-wrap items-center gap-3 shadow-md z-[1100]">
       {/* Brand & Project Selector */}
-      <div className="flex items-center gap-4">
+      <div className="flex min-w-0 flex-wrap items-center gap-3">
         <Link href="/" className="text-xl font-bold tracking-tight hover:text-blue-400 transition">
           InfraFlow
         </Link>
@@ -198,8 +198,8 @@ export default function Header({
       </div>
 
       {/* Nav Links & Action Buttons */}
-      <div className="flex items-center gap-4">
-        <nav className="hidden lg:flex gap-6 text-sm text-neutral-300 font-medium">
+      <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-3">
+        <nav className="flex items-center gap-4 text-sm text-neutral-300 font-medium">
           <button type="button" onClick={onShowCanvas} className="hover:text-white transition">
             Canvas
           </button>
@@ -211,9 +211,9 @@ export default function Header({
           </Link>
         </nav>
 
-        <div className="h-5 w-[1px] bg-neutral-700 hidden lg:block" />
+        <div className="h-5 w-[1px] bg-neutral-700 hidden sm:block" />
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           {onGenerateTerraform && (
             <Button
               onClick={onGenerateTerraform}
@@ -242,6 +242,31 @@ export default function Header({
               Import Terraform
             </Button>
           )}
+          {onAIAssistant && (
+            <Button
+              onClick={onAIAssistant}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <Sparkles className="h-4 w-4" />
+              AI Assistant
+            </Button>
+          )}
+          {onExport && (
+            <Button
+              onClick={onExport}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+          )}
+          <details className="group relative">
+            <summary className="flex h-9 cursor-pointer list-none items-center gap-1.5 rounded-md border border-neutral-700 bg-neutral-900 px-4 text-sm hover:bg-neutral-800 [&::-webkit-details-marker]:hidden">
+              More tools <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="absolute right-0 top-full mt-2 grid w-[min(22rem,calc(100vw-2rem))] max-h-[70vh] gap-2 overflow-y-auto rounded-lg border border-neutral-700 bg-[#232329] p-3 shadow-2xl" onClick={(event) => event.currentTarget.parentElement?.removeAttribute("open")}>
           {onDriftDetection && (
             <Button
               onClick={onDriftDetection}
@@ -272,16 +297,6 @@ export default function Header({
               Shortcuts
             </Button>
           )}
-          {onAIAssistant && (
-            <Button
-              onClick={onAIAssistant}
-              variant="outline"
-              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
-            >
-              <Sparkles className="h-4 w-4" />
-              AI Assistant
-            </Button>
-          )}
           {onCollaboration && (
             <Button
               onClick={onCollaboration}
@@ -290,16 +305,6 @@ export default function Header({
             >
               <Users className="h-4 w-4" />
               Collaborate
-            </Button>
-          )}
-          {onExport && (
-            <Button
-              onClick={onExport}
-              variant="outline"
-              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export
             </Button>
           )}
           {onPipeline && (
@@ -341,9 +346,8 @@ export default function Header({
             <Map className="h-4 w-4" />
             <span className="hidden sm:inline">Minimap</span>
           </Button>
-          <Button className="lg:hidden p-2" variant="ghost">
-            <Menu className="h-5 w-5" />
-          </Button>
+            </div>
+          </details>
         </div>
       </div>
     </header>
