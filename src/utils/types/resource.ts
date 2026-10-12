@@ -28,8 +28,6 @@ export type LambdaData = {
 
 export type ToolNodeData = {
   id: string;
-  label?: string;
-  colorIndex?: number;
 };
 
 export interface ResourceBlock {

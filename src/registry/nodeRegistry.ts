@@ -14,8 +14,8 @@ export const nodeRegistry: Record<string, NodeMetadata> = {
     requiredFields: ["Name", "AMI", "InstanceType"],
     templatePath: "src/templates/aws/ec2.tf.tmpl",
   },
-  sg: {
-    type: "sg",
+  securitygroup: {
+    type: "securitygroup",
     displayName: "Security Group",
     category: "Resource",
     requiredFields: ["Name", "NodeID"],
@@ -97,12 +97,5 @@ export const nodeRegistry: Record<string, NodeMetadata> = {
     category: "Connection",
     requiredFields: ["NodeID", "ALBNodeID", "EC2NodeID"],
     templatePath: "src/templates/aws/elbec2.tf.tmpl",
-  },
-  lambda: {
-    type: "lambda",
-    displayName: "Lambda Function",
-    category: "Compute",
-    requiredFields: ["Name", "NodeID", "runtime", "memory"],
-    templatePath: "src/templates/aws/lambda.tf.tmpl",
   },
 };

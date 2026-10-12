@@ -116,14 +116,6 @@ export const contractRegistry: Record<string, NodeCommunicationContract> = {
         );
       }
 
-      if (otherNode.type === "sg") {
-        return contractRegistry.sg.onConnectionRequest!(otherNode, currentNode, "source", edge);
-      }
-
-      if (otherNode.type === "iam") {
-        return contractRegistry.iam.onConnectionRequest!(otherNode, currentNode, "source", edge);
-      }
-
       return { success: true };
     },
     onConnectionDelete: (currentNode, otherNode, role, edge): SignalResponse => {
@@ -150,14 +142,6 @@ export const contractRegistry: Record<string, NodeCommunicationContract> = {
           "source",
           edge
         );
-      }
-
-      if (otherNode.type === "sg") {
-        return contractRegistry.sg.onConnectionDelete!(otherNode, currentNode, "source", edge);
-      }
-
-      if (otherNode.type === "iam") {
-        return contractRegistry.iam.onConnectionDelete!(otherNode, currentNode, "source", edge);
       }
 
       return { success: true };
@@ -273,84 +257,4 @@ export const contractRegistry: Record<string, NodeCommunicationContract> = {
       return { success: true };
     },
   },
-  sg: {
-    onContainerEnter: (childNode, containerNode): SignalResponse => {
-      if (containerNode.type === "vpc") {
-        return {
-          success: true,
-          updatedSourceData: {
-            ...childNode.data,
-            VpcID: containerNode.id,
-          },
-        };
-      }
-      return { success: false };
-    },
-    onContainerExit: (childNode, containerNode): SignalResponse => {
-      if (containerNode.type === "vpc") {
-        return {
-          success: true,
-          updatedSourceData: {
-            ...childNode.data,
-            VpcID: undefined,
-          },
-        };
-      }
-      return { success: false };
-    },
-    onConnectionRequest: (currentNode, otherNode, _role, _edge): SignalResponse => {
-      if (otherNode.type === "ec2") {
-        const currentSGs = (otherNode.data.SecurityGroups as string[]) || [];
-        if (!currentSGs.includes(currentNode.id)) {
-          return {
-            success: true,
-            updatedTargetData: {
-              ...otherNode.data,
-              SecurityGroups: [...currentSGs, currentNode.id],
-            },
-          };
-        }
-      }
-      return { success: true };
-    },
-    onConnectionDelete: (currentNode, otherNode, _role, _edge): SignalResponse => {
-      if (otherNode.type === "ec2") {
-        const currentSGs = (otherNode.data.SecurityGroups as string[]) || [];
-        return {
-          success: true,
-          updatedTargetData: {
-            ...otherNode.data,
-            SecurityGroups: currentSGs.filter((sg) => sg !== currentNode.id),
-          },
-        };
-      }
-      return { success: true };
-    }
-  },
-  iam: {
-    onConnectionRequest: (currentNode, otherNode, _role, _edge): SignalResponse => {
-      if (otherNode.type === "ec2") {
-        return {
-          success: true,
-          updatedTargetData: {
-            ...otherNode.data,
-            InstanceProfile: currentNode.id,
-          },
-        };
-      }
-      return { success: true };
-    },
-    onConnectionDelete: (currentNode, otherNode, _role, _edge): SignalResponse => {
-      if (otherNode.type === "ec2") {
-        return {
-          success: true,
-          updatedTargetData: {
-            ...otherNode.data,
-            InstanceProfile: undefined,
-          },
-        };
-      }
-      return { success: true };
-    }
-  }
 };

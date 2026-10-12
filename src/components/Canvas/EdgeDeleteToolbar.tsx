@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useReactFlow, useStore } from "@xyflow/react";
+import { useReactFlow } from "@xyflow/react";
 import { Trash2 } from "lucide-react";
 import { useDiagramStore } from "@/store/useDiagramStore";
 import { getGlobalPosition } from "./useCanvasDragAndDrop";
@@ -12,7 +12,6 @@ export default function EdgeDeleteToolbar() {
   const nodes = useDiagramStore((state) => state.nodes);
   const setEdges = useDiagramStore((state) => state.setEdges);
   const { flowToScreenPosition } = useReactFlow();
-  const transform = useStore((state) => state.transform);
 
   const position = useMemo(() => {
     if (selectedEdgeIds.length !== 1) return null;
@@ -43,8 +42,7 @@ export default function EdgeDeleteToolbar() {
       left: screenPos.x,
       top: screenPos.y - 36,
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedEdgeIds, edges, nodes, flowToScreenPosition, transform]);
+  }, [selectedEdgeIds, edges, nodes, flowToScreenPosition]);
 
   if (!position) return null;
 

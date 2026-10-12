@@ -1,24 +1,25 @@
 import { create } from "zustand";
 
 type ConfigPanelStore = {
-  isConfigOpen: boolean; // the key value pair and rest of stuff
-  isSettingsOpen: boolean; // show detaled settings from the node/resource
+  isConfigOpen: boolean;
+  isSettingsOpen: boolean;
   isEditorOpen: boolean;
   isAwsComponentsOpen: boolean;
   isAiConsoleOpen: boolean;
-  isWhiteboardOpen: boolean;
+  isMinimapOpen: boolean;
   awsOpenSections: Record<string, boolean>;
 
   settingsVersion: "resource" | "node";
 
   setEditorState: (newState: boolean) => void;
+  setMinimapState: (newState: boolean) => void;
 
   openConfig: () => void;
   openSettings: (type: "resource" | "node") => void;
   closePanels: () => void;
   toggleAwsComponents: () => void;
   toggleAiConsole: () => void;
-  toggleWhiteboard: () => void;
+  toggleMinimap: () => void;
   toggleAwsSection: (title: string) => void;
   collapseAllSideMenus: () => void;
 };
@@ -29,7 +30,7 @@ export const useUIPanelStore = create<ConfigPanelStore>((set) => ({
   isSettingsOpen: false,
   isAwsComponentsOpen: false,
   isAiConsoleOpen: false,
-  isWhiteboardOpen: false,
+  isMinimapOpen: false,
   awsOpenSections: {},
 
   settingsVersion: "node",
@@ -37,6 +38,11 @@ export const useUIPanelStore = create<ConfigPanelStore>((set) => ({
   setEditorState: (newState) =>
     set(() => ({
       isEditorOpen: newState,
+    })),
+
+  setMinimapState: (newState) =>
+    set(() => ({
+      isMinimapOpen: newState,
     })),
 
   openConfig: () =>
@@ -68,9 +74,9 @@ export const useUIPanelStore = create<ConfigPanelStore>((set) => ({
       isAiConsoleOpen: !state.isAiConsoleOpen,
     })),
 
-  toggleWhiteboard: () =>
+  toggleMinimap: () =>
     set((state) => ({
-      isWhiteboardOpen: !state.isWhiteboardOpen,
+      isMinimapOpen: !state.isMinimapOpen,
     })),
 
   toggleAwsSection: (title) =>
@@ -88,7 +94,6 @@ export const useUIPanelStore = create<ConfigPanelStore>((set) => ({
       isEditorOpen: false,
       isAwsComponentsOpen: false,
       isAiConsoleOpen: false,
-      isWhiteboardOpen: false,
       awsOpenSections: {},
     })),
 }));

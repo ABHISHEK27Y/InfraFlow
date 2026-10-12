@@ -3,17 +3,38 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Menu, Plus, ChevronDown, Trash2, Folder, Check, Download, Camera } from "lucide-react";
+import { Menu, Plus, ChevronDown, Trash2, Folder, Check, FileText, ShieldAlert, Map, GitBranch, Keyboard, Sparkles, Users, Download, Terminal, Wrench, Grid } from "lucide-react";
 import { useProjectStore } from "@/store/useProjectStore";
-import { useTerraformStore } from "@/store/useTerraformStore";
-import { downloadTerraformZip, exportDiagramToPNG } from "@/utils/exportUtils";
+import { useUIPanelStore } from "@/store/useUIPanelStore";
 
 export default function Header({
   onGenerateTerraform,
+  onShowCanvas,
   onToggleConfigPanel,
+  onImportTerraform,
+  onDriftDetection,
+  onAutoLayout,
+  onShortcuts,
+  onAIAssistant,
+  onCollaboration,
+  onExport,
+  onPipeline,
+  onRemediation,
+  onTemplateMarketplace,
 }: {
   onGenerateTerraform?: () => void;
+  onShowCanvas?: () => void;
   onToggleConfigPanel?: () => void;
+  onImportTerraform?: () => void;
+  onDriftDetection?: () => void;
+  onAutoLayout?: () => void;
+  onShortcuts?: () => void;
+  onAIAssistant?: () => void;
+  onCollaboration?: () => void;
+  onExport?: () => void;
+  onPipeline?: () => void;
+  onRemediation?: () => void;
+  onTemplateMarketplace?: () => void;
 }) {
   const {
     currentProjectId,
@@ -25,7 +46,7 @@ export default function Header({
     deleteProject,
   } = useProjectStore();
 
-  const { getAllAsString } = useTerraformStore();
+  const { isMinimapOpen, toggleMinimap } = useUIPanelStore();
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(currentProjectName);
@@ -179,30 +200,20 @@ export default function Header({
       {/* Nav Links & Action Buttons */}
       <div className="flex items-center gap-4">
         <nav className="hidden lg:flex gap-6 text-sm text-neutral-300 font-medium">
-          <a href="https://github.com/ABHISHEK27Y/InfraFlow" target="_blank" rel="noreferrer" className="hover:text-white transition flex items-center gap-1">
-            GitHub Repository
-          </a>
+          <button type="button" onClick={onShowCanvas} className="hover:text-white transition">
+            Canvas
+          </button>
+          <button type="button" onClick={onGenerateTerraform} className="hover:text-white transition">
+            Editor
+          </button>
+          <Link href="https://github.com/ABHISHEK27Y/InfraFlow#readme" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
+            Docs
+          </Link>
         </nav>
 
         <div className="h-5 w-[1px] bg-neutral-700 hidden lg:block" />
 
         <div className="flex items-center gap-2">
-          <Button
-            onClick={() => exportDiagramToPNG("rf-canvas-container")}
-            variant="outline"
-            title="Snapshot Image"
-            className="text-sm px-3 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition"
-          >
-            <Camera className="h-4 w-4 text-blue-400" />
-          </Button>
-          <Button
-            onClick={() => downloadTerraformZip(getAllAsString())}
-            variant="outline"
-            title="Download Terraform Code (ZIP)"
-            className="text-sm px-3 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition"
-          >
-            <Download className="h-4 w-4 text-emerald-400" />
-          </Button>
           {onGenerateTerraform && (
             <Button
               onClick={onGenerateTerraform}
@@ -221,7 +232,115 @@ export default function Header({
               Resources
             </Button>
           )}
-
+          {onImportTerraform && (
+            <Button
+              onClick={onImportTerraform}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <FileText className="h-4 w-4" />
+              Import Terraform
+            </Button>
+          )}
+          {onDriftDetection && (
+            <Button
+              onClick={onDriftDetection}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <ShieldAlert className="h-4 w-4" />
+              Drift Detection
+            </Button>
+          )}
+          {onAutoLayout && (
+            <Button
+              onClick={onAutoLayout}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <GitBranch className="h-4 w-4" />
+              Auto Layout
+            </Button>
+          )}
+          {onShortcuts && (
+            <Button
+              onClick={onShortcuts}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <Keyboard className="h-4 w-4" />
+              Shortcuts
+            </Button>
+          )}
+          {onAIAssistant && (
+            <Button
+              onClick={onAIAssistant}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <Sparkles className="h-4 w-4" />
+              AI Assistant
+            </Button>
+          )}
+          {onCollaboration && (
+            <Button
+              onClick={onCollaboration}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <Users className="h-4 w-4" />
+              Collaborate
+            </Button>
+          )}
+          {onExport && (
+            <Button
+              onClick={onExport}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+          )}
+          {onPipeline && (
+            <Button
+              onClick={onPipeline}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <Terminal className="h-4 w-4" />
+              CI/CD
+            </Button>
+          )}
+          {onRemediation && (
+            <Button
+              onClick={onRemediation}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <Wrench className="h-4 w-4" />
+              Remediation
+            </Button>
+          )}
+          {onTemplateMarketplace && (
+            <Button
+              onClick={onTemplateMarketplace}
+              variant="outline"
+              className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            >
+              <Grid className="h-4 w-4" />
+              Templates
+            </Button>
+          )}
+          <Button
+            onClick={toggleMinimap}
+            variant={isMinimapOpen ? "default" : "outline"}
+            className="text-sm px-4 py-2 border-neutral-700 bg-neutral-900 hover:bg-neutral-800 hover:text-white transition flex items-center gap-2"
+            title="Toggle Minimap"
+          >
+            <Map className="h-4 w-4" />
+            <span className="hidden sm:inline">Minimap</span>
+          </Button>
           <Button className="lg:hidden p-2" variant="ghost">
             <Menu className="h-5 w-5" />
           </Button>

@@ -42,8 +42,7 @@ export function useCanvasDragAndDrop(
   }, []);
 
   const onNodeDragStop = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async (event: any, node: Node) => {
+    async (event: MouseEvent | TouchEvent, node: Node, nodes: Node[]) => {
       if (
         node.type === "subnet" ||
         node.type === "ec2" ||
@@ -146,7 +145,7 @@ export function useCanvasDragAndDrop(
         }
       }
     },
-    [nodes, updateNodeParentAndPosition]
+    [updateNodeParentAndPosition]
   );
 
   return {

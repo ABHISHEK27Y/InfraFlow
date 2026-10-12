@@ -1,5 +1,5 @@
 resource "aws_subnet" "{{.NodeID}}" {
-  vpc_id     = aws_vpc.{{.ParentVpcId}}.id
+  vpc_id     = "{{.ParentVpcId}}"
   cidr_block = "{{or .CIDR "TODO: provide CIDR block"}}"
 
   {{- if .AvailabilityZone }}

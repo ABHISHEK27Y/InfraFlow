@@ -59,11 +59,11 @@ export async function handleContainment(
   }
 }
 
-export async function handleConnection(
+export function handleConnection(
   edge: Edge,
   sourceNode: Node,
   targetNode: Node
-): Promise<{ success: boolean; error?: string }> {
+): { success: boolean; error?: string } {
   const sourceContract = sourceNode.type ? contractRegistry[sourceNode.type] : null;
   const targetContract = targetNode.type ? contractRegistry[targetNode.type] : null;
   const { updateNodeData } = useDiagramStore.getState();
@@ -73,14 +73,8 @@ export async function handleConnection(
     const res = sourceContract.onConnectionRequest(sourceNode, targetNode, "source", edge);
     if (!res.success) return { success: false, error: res.error };
 
-    if (res.updatedSourceData) {
-      updateNodeData(sourceNode.id, res.updatedSourceData);
-      await syncNodeWithBackend({ id: sourceNode.id, type: sourceNode.type!, data: { ...sourceNode.data, ...res.updatedSourceData } as ResourceBlock["data"] });
-    }
-    if (res.updatedTargetData) {
-      updateNodeData(targetNode.id, res.updatedTargetData);
-      await syncNodeWithBackend({ id: targetNode.id, type: targetNode.type!, data: { ...targetNode.data, ...res.updatedTargetData } as ResourceBlock["data"] });
-    }
+    if (res.updatedSourceData) updateNodeData(sourceNode.id, res.updatedSourceData);
+    if (res.updatedTargetData) updateNodeData(targetNode.id, res.updatedTargetData);
   }
 
   // 2. Target Handshake
@@ -88,24 +82,18 @@ export async function handleConnection(
     const res = targetContract.onConnectionRequest(targetNode, sourceNode, "target", edge);
     if (!res.success) return { success: false, error: res.error };
 
-    if (res.updatedSourceData) {
-      updateNodeData(targetNode.id, res.updatedSourceData);
-      await syncNodeWithBackend({ id: targetNode.id, type: targetNode.type!, data: { ...targetNode.data, ...res.updatedSourceData } as ResourceBlock["data"] });
-    }
-    if (res.updatedTargetData) {
-      updateNodeData(sourceNode.id, res.updatedTargetData);
-      await syncNodeWithBackend({ id: sourceNode.id, type: sourceNode.type!, data: { ...sourceNode.data, ...res.updatedTargetData } as ResourceBlock["data"] });
-    }
+    if (res.updatedSourceData) updateNodeData(targetNode.id, res.updatedSourceData);
+    if (res.updatedTargetData) updateNodeData(sourceNode.id, res.updatedTargetData);
   }
 
   return { success: true };
 }
 
-export async function handleDisconnection(
+export function handleDisconnection(
   edge: Edge,
   sourceNode: Node,
   targetNode: Node
-): Promise<void> {
+): void {
   const sourceContract = sourceNode.type ? contractRegistry[sourceNode.type] : null;
   const targetContract = targetNode.type ? contractRegistry[targetNode.type] : null;
   const { updateNodeData } = useDiagramStore.getState();
@@ -114,14 +102,8 @@ export async function handleDisconnection(
   if (sourceContract?.onConnectionDelete) {
     const res = sourceContract.onConnectionDelete(sourceNode, targetNode, "source", edge);
     if (res.success) {
-      if (res.updatedSourceData) {
-        updateNodeData(sourceNode.id, res.updatedSourceData);
-        await syncNodeWithBackend({ id: sourceNode.id, type: sourceNode.type!, data: { ...sourceNode.data, ...res.updatedSourceData } as ResourceBlock["data"] });
-      }
-      if (res.updatedTargetData) {
-        updateNodeData(targetNode.id, res.updatedTargetData);
-        await syncNodeWithBackend({ id: targetNode.id, type: targetNode.type!, data: { ...targetNode.data, ...res.updatedTargetData } as ResourceBlock["data"] });
-      }
+      if (res.updatedSourceData) updateNodeData(sourceNode.id, res.updatedSourceData);
+      if (res.updatedTargetData) updateNodeData(targetNode.id, res.updatedTargetData);
     }
   }
 
@@ -129,14 +111,8 @@ export async function handleDisconnection(
   if (targetContract?.onConnectionDelete) {
     const res = targetContract.onConnectionDelete(targetNode, sourceNode, "target", edge);
     if (res.success) {
-      if (res.updatedSourceData) {
-        updateNodeData(targetNode.id, res.updatedSourceData);
-        await syncNodeWithBackend({ id: targetNode.id, type: targetNode.type!, data: { ...targetNode.data, ...res.updatedSourceData } as ResourceBlock["data"] });
-      }
-      if (res.updatedTargetData) {
-        updateNodeData(sourceNode.id, res.updatedTargetData);
-        await syncNodeWithBackend({ id: sourceNode.id, type: sourceNode.type!, data: { ...sourceNode.data, ...res.updatedTargetData } as ResourceBlock["data"] });
-      }
+      if (res.updatedSourceData) updateNodeData(targetNode.id, res.updatedSourceData);
+      if (res.updatedTargetData) updateNodeData(sourceNode.id, res.updatedTargetData);
     }
   }
 }
