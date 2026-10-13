@@ -57,7 +57,7 @@ export function evaluateTemplate(
       const list = resolveRef(listRef, data, scope);
       if (Array.isArray(list)) {
         list.forEach((item, index) => {
-          const innerScope: Scope = { ...scope, [itemName]: item };
+          const innerScope: Scope = { ...scope, [itemName]: item, ".": item };
           if (indexName) innerScope[indexName] = index;
           result += evaluateTemplate(blockContent, data, innerScope);
         });
@@ -92,11 +92,15 @@ export function evaluateTemplate(
 
 // Resolves ".Key.Path" against data, "$var" / "$var.Path" against scope,
 // and "$.Key" against the root data object
+// "." alone refers to the current scope item (set during range iteration)
 function resolveRef(
   ref: string,
   data: Record<string, unknown>,
   scope: Scope
 ): unknown {
+  if (ref === ".") {
+    return scope["."];
+  }
   if (ref.startsWith("$.")) {
     return getDeepValue(data, ref.substring(2));
   }

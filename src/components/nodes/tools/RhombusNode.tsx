@@ -7,33 +7,11 @@ import MultiDirectionHandles from "@/components/nodes/shared/MultiDirectionHandl
 import { FaTrash } from "react-icons/fa6";
 import { useShowNodeActions } from "@/utils/useShowNodeActions";
 
-function RhombusNode({ id, selected, width, height, data }: NodeProps) {
+function RhombusNode({ id, selected, width, height }: NodeProps) {
   const [hovered, setHovered] = useState(false);
   const showActions = useShowNodeActions(selected, hovered);
   const w = width || 100;
   const h = height || 100;
-
-  const colors = [
-    "bg-[#020817]/75 border-slate-700",
-    "bg-blue-900/50 border-blue-500",
-    "bg-emerald-900/50 border-emerald-500",
-    "bg-amber-900/50 border-amber-500",
-    "bg-rose-900/50 border-rose-500",
-    "bg-purple-900/50 border-purple-500",
-  ];
-  const colorIndex = (data as { colorIndex?: number })?.colorIndex || 0;
-  const currentColor = colors[colorIndex % colors.length];
-
-  const handleShapeClick = (e: React.MouseEvent) => {
-    if (useDiagramStore.getState().selectedTool === "color") {
-      e.stopPropagation();
-      useDiagramStore.getState().updateNodeData(id, { colorIndex: colorIndex + 1 });
-    }
-  };
-
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    useDiagramStore.getState().updateNodeData(id, { label: e.target.value });
-  };
   const size = Math.max(w, h);
   
   // Calculate the rotated square size to fit within container
@@ -88,8 +66,7 @@ function RhombusNode({ id, selected, width, height, data }: NodeProps) {
         
         {/* Rhombus shape - rotated square that fits within container */}
         <div
-          onClick={handleShapeClick}
-          className={`absolute top-1/2 left-1/2 flex items-center justify-center shadow transition-colors border ${currentColor}`}
+          className="absolute top-1/2 left-1/2 flex items-center justify-center bg-[#020817]/75 shadow text-sm font-semibold text-white border border-slate-700"
           style={{
             width: rotatedSize,
             height: rotatedSize,
@@ -99,23 +76,15 @@ function RhombusNode({ id, selected, width, height, data }: NodeProps) {
         >
           {/* Text rotated back to be readable */}
           <div 
-            className="text-center"
+            className="text-center px-2"
             style={{ 
               transform: "rotate(-45deg)",
-              width: rotatedSize * 0.9,
-              height: rotatedSize * 0.9,
+              maxWidth: rotatedSize * 0.7, // Ensure text fits within the diamond
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap"
             }}
-          >
-            <textarea
-              value={(data as { label?: string })?.label || ""}
-              onChange={handleTextChange}
-              placeholder="Type..."
-              className="w-full h-full bg-transparent border-none outline-none resize-none overflow-hidden text-center text-sm font-semibold text-white p-1"
-              style={{
-                lineHeight: `${rotatedSize * 0.9 - 8}px`,
-              }}
-            />
-          </div>
+          />
         </div>
       </div>
     </>

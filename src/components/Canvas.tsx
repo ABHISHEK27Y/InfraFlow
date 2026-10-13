@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useMemo } from "react";
+import { useCallback, useEffect, useRef, useMemo, useState } from "react";
 import {
   ReactFlow,
   Background,
@@ -15,10 +15,13 @@ import {
   ConnectionMode,
   OnSelectionChangeFunc,
   applyEdgeChanges,
+  type Viewport,
+  type ReactFlowInstance,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useDiagramStore } from "@/store/useDiagramStore";
 import { nodeTypes, getDefaultDataForNode } from "./Canvas/nodeTypes";
+import { edgeTypes } from "./Canvas/edges/OrthogonalEdge";
 import GhostRectangle from "./nodes/ghosts/GhostRectangle";
 import GhostRhombus from "./nodes/ghosts/GhostRhombus";
 import GhostCircle from "./nodes/ghosts/GhostCircle";
@@ -41,6 +44,19 @@ import { useCanvasDragAndDrop } from "./Canvas/useCanvasDragAndDrop";
 import SelectionToolbar from "./Canvas/SelectionToolbar";
 import EdgeDeleteToolbar from "./Canvas/EdgeDeleteToolbar";
 import CanvasControls from "./Canvas/CanvasControls";
+import CanvasSearch from "./Canvas/CanvasSearch";
+import CommandPalette from "./Canvas/CommandPalette";
+import ShortcutsHelpModal from "./Canvas/ShortcutsHelpModal";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useViewportStore } from "@/store/useViewportStore";
+
+const FIT_VIEW_OPTIONS = { padding: 0.5 };
+const DEFAULT_EDGE_OPTIONS = {
+  animated: false,
+  selectable: true,
+  deletable: true,
+  interactionWidth: 16,
+};
 
 function FlowContent() {
   const {
@@ -68,10 +84,65 @@ function FlowContent() {
     redo,
   } = useDiagramStore();
 
+  const setGlobalViewport = useViewportStore((state) => state.setViewport);
+  const reactFlowInstance = useRef<any>(null);
   const ghostRef = useRef<HTMLDivElement>(null);
   const { screenToFlowPosition } = useReactFlow();
   // 1. Ghost shape drawing & movement hook
   useGhostMovement(selectedTool, ghostRef);
+
+  const handleMove = useCallback((_event: MouseEvent | TouchEvent | null, viewport: Viewport) => {
+    setGlobalViewport(viewport);
+  }, [setGlobalViewport]);
+  const handleInit = useCallback((instance: Pick<ReactFlowInstance, "setViewport" | "getViewport">) => {
+    instance.setViewport({ x: 0, y: 0, zoom: 1 });
+    setGlobalViewport(instance.getViewport());
+  }, [setGlobalViewport]);
+
+  // Keyboard shortcuts hook
+  const { getShortcutsList } = useKeyboardShortcuts();
+  const shortcuts = getShortcutsList();
+
+  // State for shortcuts help modal
+  const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
+
+  // Listen for show-shortcuts-help event
+  useEffect(() => {
+    const handleShowShortcuts = () => setShowShortcutsHelp(true);
+    window.addEventListener("show-shortcuts-help", handleShowShortcuts);
+    return () => window.removeEventListener("show-shortcuts-help", handleShowShortcuts);
+  }, []);
+
+  // Listen for global search events
+  useEffect(() => {
+    const handleSelectNode = (e: CustomEvent) => {
+      const { nodeId } = e.detail;
+      selectedNode(nodeId);
+      handOffToSelectNode(nodeId);
+      // Fit view to node using React Flow instance
+      if (reactFlowInstance.current) {
+        reactFlowInstance.current.fitView({ nodes: [nodeId], padding: 0.5 });
+      }
+    };
+
+    const handleSelectEdge = (e: CustomEvent) => {
+      const { edgeId } = e.detail;
+      const changes = edges.map((edge) => ({
+        type: "select" as const,
+        id: edge.id,
+        selected: edge.id === edgeId,
+      }));
+      setEdges(changes);
+    };
+
+    window.addEventListener("select-node", handleSelectNode as EventListener);
+    window.addEventListener("select-edge", handleSelectEdge as EventListener);
+
+    return () => {
+      window.removeEventListener("select-node", handleSelectNode as EventListener);
+      window.removeEventListener("select-edge", handleSelectEdge as EventListener);
+    };
+  }, [nodes, edges, selectedNode, handOffToSelectNode, setEdges]);
 
   // Undo/redo keyboard shortcuts (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z, Ctrl/Cmd+Y)
   useEffect(() => {
@@ -118,11 +189,6 @@ function FlowContent() {
       const sourceNode = nodes.find((node) => node.id === connection.source);
       const targetNode = nodes.find((node) => node.id === connection.target);
       if (!sourceNode?.type || !targetNode?.type) return false;
-
-      const genericShapes = ["rectangle", "rhombus", "circle", "text"];
-      if (genericShapes.includes(sourceNode.type) || genericShapes.includes(targetNode.type)) {
-        return true;
-      }
 
       return canConnect(sourceNode.type, targetNode.type);
     },
@@ -333,9 +399,7 @@ function FlowContent() {
             const sourceNode = nodes.find((n) => n.id === edge.source);
             const targetNode = nodes.find((n) => n.id === edge.target);
             if (sourceNode && targetNode) {
-              handleDisconnection(edge, sourceNode, targetNode).catch((err) => {
-                console.error("Failed to handle disconnection properly:", err);
-              });
+              handleDisconnection(edge, sourceNode, targetNode);
             }
           }
         }
@@ -349,8 +413,9 @@ function FlowContent() {
   );
 
   return (
-    <div id="rf-canvas-container" className="w-full h-full overflow-hidden relative bg-[#070913]">
+    <div className="w-full h-full overflow-hidden relative">
       <ReactFlow
+        ref={reactFlowInstance}
         fitView={false}
         nodes={nodes}
         nodesDraggable={selectedTool === "select"}
@@ -370,26 +435,20 @@ function FlowContent() {
         onSelectionChange={onSelectionChange}
         onNodesDelete={onNodesDelete}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         elementsSelectable={selectedTool === "select"}
         edgesFocusable={selectedTool === "select"}
         selectionOnDrag={selectedTool === "select"}
         selectionMode={SelectionMode.Partial}
         connectionMode={ConnectionMode.Loose}
         deleteKeyCode={selectedTool === "select" ? ["Delete", "Backspace"] : null}
-        onMoveStart={() => collapseSideMenusOnCanvasInteract()}
-        onInit={(instance) => {
-          instance.setViewport({ x: 0, y: 0, zoom: 1 });
-        }}
-        fitViewOptions={{ padding: 0.5 }}
+        onMove={handleMove}
+        onInit={handleInit}
+        fitViewOptions={FIT_VIEW_OPTIONS}
         panOnDrag={selectedTool === "hand"}
         zoomOnScroll={true}
         panOnScroll={true}
-        defaultEdgeOptions={{
-          animated: false,
-          selectable: true,
-          deletable: true,
-          interactionWidth: 16,
-        }}
+        defaultEdgeOptions={DEFAULT_EDGE_OPTIONS}
         style={{
           cursor: (() => {
             switch (selectedTool) {
@@ -417,6 +476,7 @@ function FlowContent() {
       </ReactFlow>
 
       <CanvasControls />
+      <CanvasSearch />
       {renderGhostShape(selectedTool)}
 
       {/* Sleek Middle Delete Confirmation Modal */}
@@ -444,6 +504,16 @@ function FlowContent() {
           </div>
         </div>
       )}
+
+      {/* Command Palette */}
+      <CommandPalette />
+
+      {/* Shortcuts Help Modal */}
+      <ShortcutsHelpModal
+        isOpen={showShortcutsHelp}
+        onClose={() => setShowShortcutsHelp(false)}
+        shortcuts={shortcuts}
+      />
     </div>
   );
 }

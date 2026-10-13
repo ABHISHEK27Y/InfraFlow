@@ -4,7 +4,7 @@ resource "aws_security_group" "{{.Name}}" {
   description = "{{or .Description "TODO: Provide description"}}"
 
   {{if .VpcID}}
-    vpc_id = aws_vpc.{{.VpcID}}.id
+    vpc_id = "{{.VpcID}}"
   {{else}}
     # vpc_id = "TODO: Provide VPC ID (will use default VPC if omitted)"
   {{end}}

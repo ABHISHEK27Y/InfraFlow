@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useReactFlow, useStore } from "@xyflow/react";
+import { useReactFlow } from "@xyflow/react";
 import { Trash2 } from "lucide-react";
 import { useDiagramStore } from "@/store/useDiagramStore";
 
@@ -10,7 +10,6 @@ export default function SelectionToolbar() {
   const nodes = useDiagramStore((state) => state.nodes);
   const deleteNodes = useDiagramStore((state) => state.deleteNodes);
   const { getNodesBounds, flowToScreenPosition } = useReactFlow();
-  const transform = useStore((state) => state.transform);
 
   const position = useMemo(() => {
     if (selectedNodeIds.length <= 1) return null;
@@ -30,8 +29,7 @@ export default function SelectionToolbar() {
       left: topRight.x + 8,
       top: topRight.y - 36,
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedNodeIds, nodes, getNodesBounds, flowToScreenPosition, transform]);
+  }, [selectedNodeIds, nodes, getNodesBounds, flowToScreenPosition]);
 
   if (!position) return null;
 

@@ -1,16 +1,5 @@
 import mongoose from "mongoose";
 
-// Read environment variables
-const MONGODB_PASSWD = process.env.MONGODB_PASSWD as string;
-const MONGODB_URI_TEMPLATE = process.env.MONGODB_URI as string;
-
-if (!MONGODB_URI_TEMPLATE || !MONGODB_PASSWD) {
-  throw new Error("❌ Please add your MongoDB URI and password to .env.local");
-}
-
-// Replace <password> placeholder with actual password
-const MONGODB_URI = MONGODB_URI_TEMPLATE.replace("<password>", MONGODB_PASSWD);
-
 // Global cache to persist connection across hot reloads in Next.js
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -24,19 +13,30 @@ declare global {
 const cached = global.mongooseCache || { conn: null, promise: null };
 
 export async function connectDB() {
+  const uriTemplate = process.env.MONGODB_URI;
+  const password = process.env.MONGODB_PASSWD;
+  if (!uriTemplate || (uriTemplate.includes("<password>") && !password)) {
+    throw new Error("MongoDB is not configured. Set MONGODB_URI and, if needed, MONGODB_PASSWD.");
+  }
+  const uri = uriTemplate.replace("<password>", encodeURIComponent(password || ""));
+
   // Return existing connection if it exists
   if (cached.conn) return cached.conn;
 
   // If connection is not yet established, create a promise
   if (!cached.promise) {
     cached.promise = mongoose
-      .connect(MONGODB_URI, {
+      .connect(uri, {
         dbName: "infraflow",
         // Optional settings for production
         // useNewUrlParser: true,
         // useUnifiedTopology: true,
       })
-      .then((mongoose) => mongoose);
+      .then((mongoose) => mongoose)
+      .catch((error) => {
+        cached.promise = null;
+        throw error;
+      });
   }
 
   // Wait for connection and cache it

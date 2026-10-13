@@ -289,7 +289,7 @@ export default function AIConsole() {
               continue;
             }
 
-            const ugcpRes = await handleConnection(edgeObj, sourceNode, targetNode);
+            const ugcpRes = handleConnection(edgeObj, sourceNode, targetNode);
             if (!ugcpRes.success) {
               console.warn("UGCP rejected AI connection", ugcpRes.error);
               continue;

@@ -4,6 +4,17 @@ import canConnect from "@/config/connectionsConfig";
 import { handleConnection } from "@/lib/graphProtocol/ugcp";
 import { areNodesAlreadyConnected } from "@/utils/connectionUtils";
 
+// Default edge type - can be changed via settings
+let currentEdgeType = "orthogonal";
+
+export function setEdgeType(type: string) {
+  currentEdgeType = type;
+}
+
+export function getEdgeType() {
+  return currentEdgeType;
+}
+
 export function useCanvasConnection(
   nodes: Node[],
   edges: Edge[],
@@ -25,11 +36,8 @@ export function useCanvasConnection(
         return;
       }
 
-      const genericShapes = ["rectangle", "rhombus", "circle", "text"];
-      const isGenericConnection = genericShapes.includes(sourceNode.type) || genericShapes.includes(targetNode.type);
-
-      if (!isGenericConnection && !canConnect(sourceNode.type, targetNode.type)) {
-        alert(`❌ Cannot connect ${sourceNode.type} to ${targetNode.type}`);
+      if (!canConnect(sourceNode.type, targetNode.type)) {
+        alert(`��� Cannot connect ${sourceNode.type} to ${targetNode.type}`);
         return;
       }
 
@@ -37,25 +45,28 @@ export function useCanvasConnection(
       const edgeObj: Edge = {
         ...params,
         id: edgeId,
+        type: currentEdgeType,
         sourceHandle: params.sourceHandle ?? null,
         targetHandle: params.targetHandle ?? null,
-      };
+        // Add default label based on connection type
+        label: `${sourceNode.type} → ${targetNode.type}`,
+        // @ts-expect-error - custom property for edge label positioning
+        labelPosition: "center",
+      } as Edge;
 
       try {
-        if (!isGenericConnection) {
-          const ugcpRes = await handleConnection(edgeObj, sourceNode, targetNode);
-          if (!ugcpRes.success) {
-            alert(`❌ Connection failed: ${ugcpRes.error}`);
-            return;
-          }
+        const ugcpRes = handleConnection(edgeObj, sourceNode, targetNode);
+        if (!ugcpRes.success) {
+          alert(`��� Connection failed: ${ugcpRes.error}`);
+          return;
         }
 
         addEdge(edgeObj); // only add edge if no error
       } catch (err: unknown) {
         if (err instanceof Error) {
-          alert(`❌ ${err.message}`);
+          alert(`��� ${err.message}`);
         } else {
-          alert(`❌ ${err}`);
+          alert(`��� ${err}`);
         }
       }
     },

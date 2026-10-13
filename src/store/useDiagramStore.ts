@@ -22,6 +22,9 @@ import { UGCPGraph } from "@/models/ugcp/schema";
 import { toUGCPGraph, validateUGCPGraph } from "@/lib/ugcp/graphSync";
 import { diffUGCPGraphs, GraphDiffResult } from "@/lib/ugcp/graphDiff";
 
+// Max history entries to prevent memory leaks
+const MAX_HISTORY = 50;
+
 // Rebuilds canvas-facing nodes/edges from a canonical UGCP graph snapshot (used by undo/redo)
 function restoreCanvasFromGraph(graph: UGCPGraph): { nodes: AnyNode[]; edges: Edge[] } {
   const nodes = graph.nodes.map((n) => ({
@@ -85,6 +88,7 @@ interface DiagramState {
   updateNodePosition: (id: string, x: number, y: number) => void;
   updateNodeParentAndPosition: (id: string, parentId: string | undefined, x: number, y: number) => void;
   setNodesAndEdges: (nodes: AnyNode[], edges: Edge[]) => void;
+  setAllNodes: (nodes: AnyNode[]) => void;
   deleteNode: (id: string) => void;
   clearAll: () => void;
 
@@ -160,13 +164,19 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
     const previousSnapshot = cleanHistory[cleanHistory.length - 1] ?? null;
     const diff = previousSnapshot ? diffUGCPGraphs(previousSnapshot, validatedGraph) : null;
 
+    // Limit history size to prevent memory leaks
+    const newHistory = [...cleanHistory, validatedGraph];
+    if (newHistory.length > MAX_HISTORY) {
+      newHistory.splice(0, newHistory.length - MAX_HISTORY);
+    }
+
     set({
-      history: [...cleanHistory, validatedGraph],
-      historyIndex: cleanHistory.length,
+      history: newHistory,
+      historyIndex: newHistory.length - 1,
       lastDiff: diff,
     });
 
-    console.log(`Committed UGCP Graph v${nextVersion}. History count: ${cleanHistory.length + 1}`, diff);
+    console.log(`Committed UGCP Graph v${nextVersion}. History count: ${newHistory.length}`, diff);
   },
 
   undo: () => {
@@ -448,6 +458,15 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
         lastDiff: null,
       };
     });
+    get().commitGraphState();
+  },
+
+  setAllNodes: (nodes: AnyNode[]) => {
+    set((state) => ({
+      nodes: layoutNodes(nodes, state.nodes).map((node) =>
+        withFlowPresentation(node, state.selectedTool)
+      ),
+    }));
     get().commitGraphState();
   },
 
