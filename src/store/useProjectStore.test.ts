@@ -35,6 +35,24 @@ describe("project persistence", () => {
     expect(fetch).not.toHaveBeenCalled();
   }, 20000);
 
+  it("restores saved project content after a fresh initialization", async () => {
+    const { useProjectStore } = await import("./useProjectStore");
+    const { useTerraformStore } = await import("./useTerraformStore");
+    await useProjectStore.getState().init();
+    const projectId = useProjectStore.getState().currentProjectId;
+    useTerraformStore.getState().setBlocks({ example: 'resource "aws_vpc" "main" {}' });
+    await useProjectStore.getState().saveCurrentProject("local");
+
+    vi.resetModules();
+    const { useProjectStore: reloadedProjects } = await import("./useProjectStore");
+    const { useTerraformStore: reloadedTerraform } = await import("./useTerraformStore");
+    await reloadedProjects.getState().init();
+
+    expect(reloadedProjects.getState().currentProjectId).toBe(projectId);
+    expect(reloadedTerraform.getState().terraformBlocks.example).toBe('resource "aws_vpc" "main" {}');
+    expect(fetch).not.toHaveBeenCalled();
+  }, 20000);
+
   it("prefers a newer local copy over an older cloud copy", async () => {
     localStorage.setItem("infraflow_sync_mode", "hybrid");
     localStorage.setItem("infraflow_projects", JSON.stringify([

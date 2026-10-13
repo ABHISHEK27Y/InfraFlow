@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/label";
 import { Download, FileCode, GitBranch, Cloud, Box, Settings, X, Check } from "lucide-react";
 import { exportDiagram, EXPORT_FORMATS, ExportOptions, ExportResult } from "@/lib/export/multiCloudExport";
+import { createExportZip } from "@/lib/export/createZip";
 import { AnyNode } from "@/utils/types/resource";
 import { Edge } from "@xyflow/react";
 import { toast } from "sonner";
@@ -107,11 +108,23 @@ export function ExportPanel({ isOpen, onClose, nodes, edges }: ExportPanelProps)
     toast.success(`Downloaded ${Object.keys(files).length} file(s)`);
   };
 
-  const handleDownloadZip = () => {
+  const handleDownloadZip = async () => {
     if (!exportResult) return;
-    // TODO: Implement zip download using JSZip
-    toast.info("ZIP download coming soon. Individual files downloaded for now.");
-    handleDownload();
+    try {
+      const blob = await createExportZip(exportResult.files);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `infraflow-${exportResult.format}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast.success("ZIP downloaded");
+    } catch (error) {
+      console.error("ZIP download failed:", error);
+      toast.error("ZIP download failed. Check console for details.");
+    }
   };
 
   const formatInfo = EXPORT_FORMATS.find(f => f.value === selectedFormat);

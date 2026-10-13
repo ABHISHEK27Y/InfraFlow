@@ -1,5 +1,5 @@
-import * as hcl2json from "hcl2json";
 import type { AnyNode } from "@/utils/types/resource";
+import { parseHCL } from "@/lib/terraformParser";
 
 export interface TerraformResource {
   type: string;
@@ -31,15 +31,14 @@ export interface ImportResult {
 }
 
 /**
- * Parses Terraform HCL content and extracts resources, data sources, and modules
+ * Parses the common Terraform blocks supported by the local HCL parser.
  */
 export async function parseTerraformHCL(content: string, fileName: string = "main.tf"): Promise<ImportResult> {
   const errors: string[] = [];
   const warnings: string[] = [];
 
   try {
-    // Parse HCL to JSON
-    const parsed = await hcl2json.parse(content);
+    const parsed = parseHCL(content);
 
     const tfModule: TerraformModule = {
       source: fileName,
@@ -51,81 +50,19 @@ export async function parseTerraformHCL(content: string, fileName: string = "mai
       outputs: {},
     };
 
-    // Extract resources
-    if (parsed.resource) {
-      for (const resourceType of Object.keys(parsed.resource)) {
-        for (const resourceName of Object.keys(parsed.resource[resourceType])) {
-          const resourceData = parsed.resource[resourceType][resourceName];
+    tfModule.resources = parsed.resources.map(({ type, name, attributes }) => ({
+      type,
+      name,
+      provider: type.split("_")[0] || "aws",
+      data: attributes,
+      location: { file: fileName, line: 0 },
+    }));
+    tfModule.variables = parsed.variables;
+    tfModule.outputs = parsed.outputs;
 
-          // Determine provider from resource type prefix
-          const provider = resourceType.split("_")[0] || "aws";
-
-          tfModule.resources.push({
-            type: resourceType,
-            name: resourceName,
-            provider,
-            data: resourceData,
-            location: { file: fileName, line: 0 }, // Line numbers not available in hcl2json
-          });
-        }
-      }
+    if (/\b(?:data\s+"[^"]+"\s+"[^"]+"|module\s+"[^"]+"|provider\s+"[^"]+")\s*\{/.test(content)) {
+      warnings.push(`${fileName}: data sources, modules, and provider blocks are not imported by the basic HCL parser.`);
     }
-
-    // Extract data sources
-    if (parsed.data) {
-      for (const dataType of Object.keys(parsed.data)) {
-        for (const dataName of Object.keys(parsed.data[dataType])) {
-          const dataData = parsed.data[dataType][dataName];
-
-          const provider = dataType.split("_")[0] || "aws";
-
-          tfModule.dataSources.push({
-            type: dataType,
-            name: dataName,
-            provider,
-            data: dataData,
-            location: { file: fileName, line: 0 },
-          });
-        }
-      }
-    }
-
-    // Extract modules
-    if (parsed.module) {
-      for (const moduleName of Object.keys(parsed.module)) {
-        const moduleData = parsed.module[moduleName];
-        tfModule.modules.push({
-          source: moduleData.source as string || "",
-          version: moduleData.version as string,
-          providers: {},
-          resources: [],
-          dataSources: [],
-          modules: [],
-        });
-      }
-    }
-
-    // Extract providers
-    if (parsed.provider) {
-      for (const providerName of Object.keys(parsed.provider)) {
-        const providerConfig = parsed.provider[providerName];
-        tfModule.providers[providerName] = {
-          source: providerConfig.source as string || providerName,
-          version: providerConfig.version as string,
-        };
-      }
-    }
-
-    // Extract variables
-    if (parsed.variable) {
-      tfModule.variables = parsed.variable;
-    }
-
-    // Extract outputs
-    if (parsed.output) {
-      tfModule.outputs = parsed.output;
-    }
-
     return {
       success: true,
       module: tfModule,

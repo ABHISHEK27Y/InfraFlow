@@ -27,11 +27,14 @@ function getResourceType(node: AnyNode): string {
 
 function getResourceName(node: AnyNode): string {
   const data = node.data as Record<string, unknown>;
-  return (data.Name as string) || node.id;
+  const explicitName = [data.Name, data.name, data.BucketName, data.TagName]
+    .find((value): value is string => typeof value === "string" && value.trim().length > 0);
+  return explicitName?.trim() || `${node.type || "resource"}_${node.id.slice(0, 8)}`;
 }
 
 function sanitizeName(name: string): string {
-  return name.replace(/[^a-zA-Z0-9_-]/g, "_").toLowerCase();
+  const normalized = name.replace(/[^a-zA-Z0-9_-]/g, "_").toLowerCase();
+  return /^[a-z_]/.test(normalized) ? normalized : `resource_${normalized}`;
 }
 
 function generateTerraform(nodes: AnyNode[], edges: Edge[], options: ExportOptions): ExportResult {
