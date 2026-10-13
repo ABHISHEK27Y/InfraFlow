@@ -23,16 +23,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-hidden`}
-          suppressHydrationWarning
-        >
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+  const page = (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-hidden`}
+        suppressHydrationWarning
+      >
+        {children}
+      </body>
+    </html>
   );
+  return process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY
+    ? <ClerkProvider>{page}</ClerkProvider>
+    : page;
 }

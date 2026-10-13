@@ -142,4 +142,9 @@ function Login() {
   );
 }
 
-export default Login;
+export default function LoginPage() {
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+    return <main className="flex min-h-screen items-center justify-center bg-gray-900 text-white">Sign in is unavailable on this preview.</main>;
+  }
+  return <Login />;
+}
