@@ -66,15 +66,10 @@ function AppContent() {
         onShowCanvas={() => setEditorState(false)}
         onToggleConfigPanel={openConfig}
         onImportTerraform={() => setShowImportModal(true)}
-        onDriftDetection={() => setShowDriftPanel(true)}
         onAutoLayout={() => setShowAutoLayout(true)}
         onShortcuts={() => setShowShortcuts(true)}
         onAIAssistant={() => setShowAIAssistant(true)}
-        onCollaboration={() => setShowCollaboration(true)}
         onExport={() => setShowExport(true)}
-        onPipeline={() => setShowPipeline(true)}
-        onRemediation={() => setShowRemediation(true)}
-        onTemplateMarketplace={() => setShowTemplateMarketplace(true)}
       />
       <div className="relative min-h-0 flex-1">
         <Sidebar />
