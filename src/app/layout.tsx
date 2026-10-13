@@ -33,7 +33,7 @@ export default function RootLayout({
       </body>
     </html>
   );
-  return process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY
+  return process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
     ? <ClerkProvider>{page}</ClerkProvider>
     : page;
 }
